@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nuania labb - Web Design</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Mitr:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            light: '#FFF5FA',   
+                            base: '#EE66B3',    
+                            dark: '#3A3250',    
+                            accent: '#FDE7F3',  
+                            white: 'rgba(255, 255, 255, 0.85)'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, textad, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video, button, input, textarea, select {
+            font-family: 'Mitr', sans-serif !important;
+            color: #3A3250; 
+        }
+
+        .font-eng {
+            font-family: 'Fredoka', sans-serif !important;
+        }
+        .font-eng * {
+            font-family: 'Fredoka', sans-serif !important;
+        }
+
+        body {
+            background-color: #FFF5FA; 
+            background-image: 
+                radial-gradient(at 10% 0%, #FDE7F3 0px, transparent 50%),
+                radial-gradient(at 90% 10%, #EE66B3 0px, transparent 50%),
+                radial-gradient(at 50% 90%, #FDF2F8 0px, transparent 50%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* --- Emoji Falling Animation --- */
+        .emoji-wrap {
+            position: fixed;
+            top: -50px;
+            z-index: -1; /* อยู่หลังเนื้อหา */
+            user-select: none;
+            pointer-events: none;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+        }
+
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
+
+        .container-box {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .bento-card {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 30px rgba(238, 102, 179, 0.15); 
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .floating-nav {
+            position: sticky;
+            top: 1rem;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 999px;
+            padding: 0.5rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(58, 50, 80, 0.08); 
+            margin-bottom: 1rem;
+        }
+
+        .work-item-btn {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            padding: 1rem;
+            background: #fff;
+            border-radius: 1rem;
+            margin-bottom: 0.75rem;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+
+        .work-item-btn.active {
+            border-color: #EE66B3;
+            background: #FFF5FA;
+        }
+
+        .work-icon-box {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #1a1a1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .status-container {
+            background: #fff;
+            border-radius: 1.5rem;
+            padding: 1.2rem;
+            margin-top: 1rem;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.03);
+        }
+
+        .status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+
+        .status-title { font-size: 13px; font-weight: 700; color: #777; }
+        .status-update { background: #f0f0f0; padding: 2px 10px; border-radius: 8px; font-size: 11px; color: #666; }
+
+        .status-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: 1.5px dashed #aaa;
+            border-radius: 1rem;
+            padding: 12px;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .status-button span { font-weight: 700; font-size: 14px; color: #3A3250; }
+        .status-footer { text-align: center; font-size: 10px; color: #aaa; margin-top: 0.8rem; }
+        .term-card { background: #fff; border-radius: 2rem; padding: 1.5rem; box-shadow: 0 2px 15px rgba(0,0,0,0.02); }
+    </style>
+</head>
+<body>
+
+    <div class="emoji-wrap" style="left: 5%; animation-duration: 10s; animation-delay: 0s;">🐈‍⬛</div>
+    <div class="emoji-wrap" style="left: 20%; animation-duration: 12s; animation-delay: 2s;">💌</div>
+    <div class="emoji-wrap" style="left: 40%; animation-duration: 15s; animation-delay: 1s;">🐈‍⬛</div>
+    <div class="emoji-wrap" style="left: 65%; animation-duration: 11s; animation-delay: 3s;">💌</div>
+    <div class="emoji-wrap" style="left: 85%; animation-duration: 14s; animation-delay: 0.5s;">🐈‍⬛</div>
+    <div class="emoji-wrap" style="left: 50%; animation-duration: 18s; animation-delay: 5s;">💌</div>
+
+    <div class="container-box">
+        
+        <nav class="floating-nav">
+            <span class="font-eng font-semibold text-lg text-brand-dark tracking-wide pl-2">Nuania</span>
+            <div class="flex gap-2 font-eng text-sm">
+                <a href="#work" class="px-3 py-1.5 rounded-full hover:bg-brand-accent/50 transition font-medium">Work</a>
+                <a href="#price" class="px-3 py-1.5 rounded-full hover:bg-brand-accent/50 transition font-medium">Price</a>
+                <a href="#contact" class="px-3 py-1.5 bg-brand-base text-white rounded-full font-medium">Contact</a>
+            </div>
+        </nav>
+
+        <header class="bento-card text-center relative overflow-hidden">
+            <svg class="absolute -top-10 -right-10 text-brand-accent/40 w-40 h-40 rotate-12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+            
+            <div class="relative z-10">
+                <div class="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden border-[3px] border-white shadow-sm bg-brand-accent/30 flex items-center justify-center">
+                    <img src="https://i.postimg.cc/Xq4CB5Wd/IMG-3494.png" alt="Nuania Labb Logo" class="w-full h-full object-cover">
+                </div>
+
+                <div class="inline-flex items-center justify-center gap-2 bg-white/80 px-4 py-1.5 rounded-full text-xs font-medium border border-brand-accent mb-4 text-brand-dark shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+                    ยินดีต้อนรับสู่ร้านของนัวนัว
+                </div>
+                
+                <h1 class="font-eng text-[2.2rem] leading-[1.1] font-bold text-brand-dark mb-1 tracking-tight">Nuania labb</h1>
+                <p class="font-eng text-xl text-brand-base font-semibold mb-4 tracking-widest uppercase">Design Store</p>
+                
+                <p class="text-sm leading-relaxed text-brand-dark/80 max-w-[280px] mx-auto">
+                    สอบถามสั่งงาน สามารถทักได้เลยค้าบ<br>
+                    ทางร้านออกแบบจัดวางให้ฟรี
+                </p>
+
+                <div class="status-container">
+                    <div class="status-header">
+                        <span class="status-title font-eng">Status Bar: เช็คคิวงาน</span>
+                        <span class="status-update font-eng">Update: มี.ค. 69</span>
+                    </div>
+                    <a href="https://ksm-bb.github.io/Nuaburi.bibi/" target="_blank" class="status-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3A3250" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect><path d="M9 14l2 2 4-4"></path></svg>
+                        <span>คลิกเพื่อเช็คสถานะคิวที่นี่</span>
+                    </a>
+                    <div class="status-footer">
+                        รองงานภายในกำหนด งดจิก งดเร่งนะค้าบ 🫶🏻
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div class="flex flex-col gap-2 p-5 rounded-[2rem] bg-brand-base text-white text-center items-center">
+                <p class="text-[10px] font-medium opacity-90">เร่งปกติ</p>
+                <p class="text-2xl font-bold">+50.-</p>
+                <p class="bg-white/20 px-3 py-1 rounded-full text-[9px]">รอ 1 วัน</p>
+            </div>
+            <div class="flex flex-col gap-2 p-5 rounded-[2rem] bg-brand-dark text-white text-center items-center">
+                <p class="text-[10px] font-medium opacity-90">เร่งปุ๊ด</p>
+                <p class="text-2xl font-bold">+100.-</p>
+                <p class="bg-white/20 px-3 py-1 rounded-full text-[9px]">รอ 5-6 ชม.</p>
+            </div>
+        </div>
+        <div id="work" class="bento-card">
+            <div class="text-center mb-6">
+                <h2 class="text-brand-base font-bold text-lg flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    ตัวอย่างผลงาน
+                </h2>
+                <p class="text-[10px] text-brand-base/70 mt-1">คลิกดูตัวอย่างงานในไดร์ฟ</p>
+            </div>
+
+            <button onclick="switchTab('bright')" id="btn-bright" class="work-item-btn active group">
+                <div class="work-icon-box" style="background: #1a1a1a;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                </div>
+                <span class="text-sm font-semibold flex-1 text-left">หมวดหมู่: งานป้าย</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2" class="group-hover:stroke-brand-base transition-colors"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
+
+            <button onclick="switchTab('dark')" id="btn-dark" class="work-item-btn group">
+                <div class="work-icon-box" style="background: #EE66B3;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                </div>
+                <span class="text-sm font-semibold flex-1 text-left">หมวดหมู่: งานสติกเกอร์</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2" class="group-hover:stroke-brand-base transition-colors"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
+
+            <button onclick="switchTab('pastel')" id="btn-pastel" class="work-item-btn group">
+                <div class="work-icon-box" style="background: #FDE7F3;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EE66B3" stroke-width="2"><circle cx="13.5" cy="6.5" r=".5"></circle><circle cx="17.5" cy="10.5" r=".5"></circle><circle cx="8.5" cy="7.5" r=".5"></circle><circle cx="6.5" cy="12.5" r=".5"></circle><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.9 0 1.6-.7 1.6-1.6 0-.4-.2-.8-.5-1.1-.3-.3-.5-.7-.5-1.1 0-.9.7-1.6 1.6-1.6H17c2.8 0 5-2.2 5-5 0-5.2-4.5-9.2-10-9.2z"></path></svg>
+                </div>
+                <span class="text-sm font-semibold flex-1 text-left">หมวดหมู่: งานเว็บ</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2" class="group-hover:stroke-brand-base transition-colors"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
+
+            <div id="tab-bright" class="mt-4 p-4 bg-white/50 rounded-2xl border border-dashed border-brand-base/30">
+                <a href="https://drive.google.com/drive/folders/111HWgVcBq93HDEgg5ZNfSUqNKo5n4E1a" target="_blank" class="work-link"><span class="text-xs">คลิกดูตัวอย่าง แนวท้องฟ้า</span></a>
+                <a href="https://drive.google.com/drive/folders/1Do47CEKwJjx1z8oQ_p0QoQcF0TD81pRV" target="_blank" class="work-link"><span class="text-xs">คลิกดูตัวอย่าง แนว Circle</span></a>
+            </div>
+
+            <div id="tab-dark" class="mt-4 p-4 bg-white/50 rounded-2xl border border-dashed border-brand-base/30 hidden">
+                <a href="https://drive.google.com/drive/folders/1UEoPEmVaXAcEdfP7qqM7CLzvFmOgp31n" target="_blank" class="work-link"><span class="text-xs">คลิกดูตัวอย่าง แนวมืด</span></a>
+            </div>
+
+            <div id="tab-pastel" class="mt-4 p-4 bg-white/50 rounded-2xl border border-dashed border-brand-base/30 hidden">
+                <a href="https://drive.google.com/drive/folders/1UgIf9JPFphit1Z4sChV6IlO1VR4iya2Q" target="_blank" class="work-link"><span class="text-xs">แนวน้องกระต่าย</span></a>
+                <a href="https://drive.google.com/drive/folders/1JtmWnctAtktVtiPqeYnAVWLK4LPLcLq_" target="_blank" class="work-link"><span class="text-xs">เพิลเวฟ</span></a>
+            </div>
+        </div>
+
+        <div id="price" class="bento-card">
+            <h3 class="text-sm font-semibold mb-3 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                รายละเอียดเพิ่มเติม
+            </h3>
+            <div class="space-y-2 text-xs border-l-2 border-brand-accent pl-3">
+                <p class="flex justify-between"><span>แก้หัวป้าย / เพิ่มข้อความ</span> <span class="font-medium">+60.-</span></p>
+                <p class="flex justify-between"><span>แก้จุดเล็กๆ (ต่อจุด)</span> <span class="font-medium">20.-</span></p>
+                <p class="flex justify-between"><span>รับป้ายเปล่า</span> <span class="font-medium">+100.-</span></p>
+                <p class="flex justify-between text-brand-dark/70 pt-1"><span>*เปลี่ยนตูน/สี หลังส่งงาน = สั่งใหม่</span></p>
+            </div>
+        </div>
+
+        <div class="term-card">
+            <div class="term-header font-eng">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                -*.°✿ Term of service ✿°.*-
+            </div>
+            <div class="space-y-3">
+                <div class="term-item">
+                    <div class="term-icon"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                    <p>บรีฟก่อนโอนทุกครั้ง</p>
+                </div>
+                <div class="term-item">
+                    <div class="term-icon"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                    <div>
+                        <p>งานเร่ง x2 (ได้รับงานภายใน 1-2 ชั่วโมง)</p>
+                        <p class="text-brand-base font-medium" style="font-size: 10px;">ลัดคิว +30.- / งาน</p>
+                    </div>
+                </div>
+                <div class="term-item">
+                    <div class="term-icon"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                    <p>ไม่รับทำงานตามร้านอื่นทุกกรณี</p>
+                </div>
+                <div class="term-item">
+                    <div class="term-icon"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                    <p>กรณียื่นเรฟ ต้องเป็นเรฟของตัวเองเท่านั้น</p>
+                </div>
+                <div class="term-item">
+                    <div class="term-icon"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                    <p>ยกเลิกงาน หัก 50% กรณีเริ่มงานแล้วไม่คืนเงินทุกกรณี</p>
+                </div>
+                <div class="term-item">
+                    <div class="term-icon"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                    <p>ไม่รับแก้ทำงานหลังส่งงานทุกกรณี (ยกเว้นความผิดพลาดของร้าน)</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="contact" class="grid grid-cols-2 gap-3 mb-6">
+            <a href="https://www.facebook.com/nuania.reiss?" target="_blank" class="bento-card p-3 flex flex-col items-center justify-center gap-2 hover:bg-white/80 transition text-brand-dark text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+                <span class="font-eng text-xs font-medium">Facebook</span>
+            </a>
+            <a href="https://lin.ee/6i1C9tC" target="_blank" class="bento-card p-3 flex flex-col items-center justify-center gap-2 hover:bg-white/80 transition text-brand-dark text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                <span class="font-eng text-xs font-medium">Line: @027xbfej</span>
+            </a>
+        </div>
+
+        <footer class="text-center text-[10px] text-brand-dark/50 font-eng pb-6">
+            &copy; 2026 Nuania labb Store.
+        </footer>
+    </div>
+
+    <script>
+        function switchTab(tabId) {
+            document.getElementById('tab-bright').classList.add('hidden');
+            document.getElementById('tab-dark').classList.add('hidden');
+            document.getElementById('tab-pastel').classList.add('hidden');
+            
+            document.getElementById('btn-bright').classList.remove('active');
+            document.getElementById('btn-dark').classList.remove('active');
+            document.getElementById('btn-pastel').classList.remove('active');
+            
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            document.getElementById('btn-' + tabId).classList.add('active');
+        }
+    </script>
+</body>
+</html>
